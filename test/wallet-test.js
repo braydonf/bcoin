@@ -1221,13 +1221,19 @@ describe('Wallet', function() {
 
   it('should get pending range of txs', async () => {
     const wallet = currentWallet;
-    const txs = await wallet.getPending(null);
+    const txs = await wallet.listUnconfirmed(null, {
+      limit: 100,
+      reverse: false
+    });
     assert.strictEqual(txs.length, 2);
   });
 
   it('should get pending range of txs from account', async () => {
     const wallet = currentWallet;
-    const txs = await wallet.getPending('foo');
+    const txs = await wallet.listUnconfirmed('foo', {
+      limit: 100,
+      reverse: false
+    });
     assert.strictEqual(txs.length, 2);
   });
 
@@ -1358,7 +1364,10 @@ describe('Wallet', function() {
   it('should get details', async () => {
     const wallet = currentWallet;
 
-    const txs = await wallet.getPending('foo');
+    const txs = await wallet.listUnconfirmed('foo', {
+      limit: 100,
+      reverse: false
+    });
 
     const details = await wallet.toDetails(txs);
 
@@ -1372,7 +1381,10 @@ describe('Wallet', function() {
 
     await wallet.rename('test');
 
-    const txs = await wallet.getPending('foo');
+    const txs = await wallet.listUnconfirmed('foo', {
+      limit: 100,
+      reverse: false
+    });
 
     const details = await wallet.toDetails(txs);
 
