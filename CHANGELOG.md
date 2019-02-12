@@ -1,12 +1,85 @@
 # Bcoin Release Notes & Changelog
 
-## v1.0.x
+## v2.0.0
 
 ### Wallet API changes
 
-Creating a watch-only wallet now requires an `account-key` (or `accountKey`)
-argument. This is to prevent bcoin from generating keys and addresses the user
-can not spend from.
+The wallet has been updated to handle a large number of transactions, there
+are several new API methods that have been added and modified to better
+support transaction queries. This also includes the ability to query
+for transaction history by median-time-past (MTP). It is necessary to
+perform a wallet rescan to update the wallet indexes.
+
+#### HTTP
+
+These endpoints have been modified:
+
+- `GET /wallet/:id/tx/history` - The params are now `time`, `after`,
+  `limit`, and `reverse`.
+- `GET /wallet/:id/tx/unconfirmed` - The params are the same as above.
+- `PUT /wallet/:id` - Creating a watch-only wallet now requires an
+  `account-key` (or `accountKey`) argument. This is to prevent bcoin from
+  generating keys and addresses the user can not spend from.
+
+These endpoints have been deprecated:
+
+- `GET /wallet/:id/tx/range` - Instead use the `time` param for the history and
+  unconfirmed endpoints.
+- `GET /wallet/:id/tx/last` - Instead use `reverse` param for the history and
+  unconfirmed endpoints.
+
+##### Examples
+
+```
+GET /wallet/:id/tx/history?after=<txid>&limit=50&reverse=false
+GET /wallet/:id/tx/history?after=<txid>&limit=50&reverse=true
+```
+By using `after=<txid>` we can anchor pages so that results will not shift
+when new blocks and transactions arrive. With `reverse=true` we can change
+the order the transactions are returned as _latest to genesis_. The
+`limit=<number>` specifies the maximum number of transactions to return
+in the result.
+
+```
+GET /wallet/:id/tx/history?time=<median-time-past>&limit=50&reverse=false
+GET /wallet/:id/tx/history?time=<median-time-past>&limit=50&reverse=true
+```
+The param `time` is in epoch seconds and indexed based on median-time-past
+(MTP) and `date` is ISO 8601 format. Because multiple transactions can share
+the same time, this can function as an initial query, and then switch to the
+above `after` format for the following pages.
+
+```
+GET /wallet/:id/tx/unconfirmed?after=<txid>&limit=50&reverse=false
+GET /wallet/:id/tx/unconfirmed?after=<txid>&limit=50&reverse=true
+GET /wallet/:id/tx/unconfirmed?time=<time-received>&limit=50&reverse=false
+```
+The same will apply to unconfirmed transactions. The `time` is in epoch
+seconds and indexed based on when the transaction was added to the wallet.
+
+#### RPC
+
+The following new methods have been added:
+
+- `listhistory` - List history with a limit and in reverse order.
+- `listhistoryafter` - List history after a txid _(subsequent pages)_.
+- `listhistorybytime` - List history by giving a timestamp in epoch seconds
+  _(block median time past)_.
+- `listunconfirmed` - List unconfirmed transactions with a limit and in
+  reverse order.
+- `listunconfirmedafter` - List unconfirmed transactions after a txid
+  _(subsequent pages)_.
+- `listunconfirmedbytime` - List unconfirmed transactions by time they
+  where added.
+
+The following methods have been deprecated:
+
+- `listtransactions` - Use `listhistory` and the related methods and the
+  `after` argument for results that do not shift when new blocks arrive.
+- `importprunedfunds` - Would cause a shift in transaction counts, and better
+  handled by adding and removing blocks at a time via resetting and
+  rescanning pruned and spv nodes.
+- `removeprunedfunds` - For similar reasons as `importprunedfunds`.
 
 ## v1.0.0
 
