@@ -1,0 +1,546 @@
+{
+  "summary": [
+    {
+      "type": "write",
+      "length": "256",
+      "operations": 959,
+      "min": 95.03,
+      "max": 2411.072,
+      "average": 180.91450052137648,
+      "median": 120.861
+    },
+    {
+      "type": "write",
+      "length": "512",
+      "operations": 178,
+      "min": 96.877,
+      "max": 1747.883,
+      "average": 176.88580898876396,
+      "median": 126.395
+    },
+    {
+      "type": "write",
+      "length": "1024",
+      "operations": 120,
+      "min": 101.585,
+      "max": 1703.966,
+      "average": 190.50753333333333,
+      "median": 125.318
+    },
+    {
+      "type": "write",
+      "length": "2048",
+      "operations": 119,
+      "min": 100.857,
+      "max": 1716.934,
+      "average": 160.8377310924371,
+      "median": 119.968
+    },
+    {
+      "type": "write",
+      "length": "4096",
+      "operations": 239,
+      "min": 103.527,
+      "max": 1349.997,
+      "average": 165.2889748953975,
+      "median": 124.299
+    },
+    {
+      "type": "write",
+      "length": "8192",
+      "operations": 179,
+      "min": 106.158,
+      "max": 1662.909,
+      "average": 181.34708379888272,
+      "median": 126.887
+    },
+    {
+      "type": "write",
+      "length": "16384",
+      "operations": 239,
+      "min": 104.942,
+      "max": 3698.773,
+      "average": 319.01587029288703,
+      "median": 127.525
+    },
+    {
+      "type": "write",
+      "length": "32768",
+      "operations": 300,
+      "min": 115.982,
+      "max": 1673.407,
+      "average": 183.22222,
+      "median": 137.777
+    },
+    {
+      "type": "write",
+      "length": "65536",
+      "operations": 418,
+      "min": 129.612,
+      "max": 1846.932,
+      "average": 202.5473325358852,
+      "median": 155.904
+    },
+    {
+      "type": "write",
+      "length": "131072",
+      "operations": 479,
+      "min": 149.253,
+      "max": 3358.826,
+      "average": 255.76917745302697,
+      "median": 185.756
+    },
+    {
+      "type": "write",
+      "length": "262144",
+      "operations": 776,
+      "min": 197.834,
+      "max": 27336.78,
+      "average": 354.24095747422666,
+      "median": 236.787
+    },
+    {
+      "type": "write",
+      "length": "524288",
+      "operations": 537,
+      "min": 296.904,
+      "max": 11222.268,
+      "average": 496.6593538175044,
+      "median": 339.319
+    },
+    {
+      "type": "write",
+      "length": "1048576",
+      "operations": 1436,
+      "min": 486.876,
+      "max": 25200.681,
+      "average": 739.72206545961,
+      "median": 549.495
+    },
+    {
+      "type": "write",
+      "length": "2097152",
+      "operations": 418,
+      "min": 878.009,
+      "max": 5686.699,
+      "average": 1236.4511746411486,
+      "median": 984.024
+    },
+    {
+      "type": "write",
+      "length": "4194304",
+      "operations": 59,
+      "min": 1671.324,
+      "max": 27727.2,
+      "average": 2849.3842033898304,
+      "median": 1837.301
+    },
+    {
+      "type": "read",
+      "length": "256",
+      "operations": 959,
+      "min": 48.96,
+      "max": 2140.044,
+      "average": 89.57967778936396,
+      "median": 63.986
+    },
+    {
+      "type": "read",
+      "length": "512",
+      "operations": 178,
+      "min": 52.042,
+      "max": 137.691,
+      "average": 71.4082415730337,
+      "median": 67.282
+    },
+    {
+      "type": "read",
+      "length": "1024",
+      "operations": 120,
+      "min": 50.51,
+      "max": 920.029,
+      "average": 81.7357083333333,
+      "median": 68.991
+    },
+    {
+      "type": "read",
+      "length": "2048",
+      "operations": 119,
+      "min": 50.036,
+      "max": 326.566,
+      "average": 70.61485714285713,
+      "median": 61.462
+    },
+    {
+      "type": "read",
+      "length": "4096",
+      "operations": 239,
+      "min": 49.085,
+      "max": 183.601,
+      "average": 68.7043891213389,
+      "median": 63.326
+    },
+    {
+      "type": "read",
+      "length": "8192",
+      "operations": 179,
+      "min": 51.847,
+      "max": 841.89,
+      "average": 77.20249162011172,
+      "median": 66.658
+    },
+    {
+      "type": "read",
+      "length": "16384",
+      "operations": 239,
+      "min": 52.21,
+      "max": 391.39,
+      "average": 68.39205439330547,
+      "median": 63.404
+    },
+    {
+      "type": "read",
+      "length": "32768",
+      "operations": 300,
+      "min": 54.8,
+      "max": 206.566,
+      "average": 70.68267000000002,
+      "median": 67.727
+    },
+    {
+      "type": "read",
+      "length": "65536",
+      "operations": 418,
+      "min": 59.718,
+      "max": 1366.085,
+      "average": 96.31955023923442,
+      "median": 73.828
+    },
+    {
+      "type": "read",
+      "length": "131072",
+      "operations": 479,
+      "min": 67.849,
+      "max": 1547.803,
+      "average": 110.22205010438415,
+      "median": 85.567
+    },
+    {
+      "type": "read",
+      "length": "262144",
+      "operations": 776,
+      "min": 86.155,
+      "max": 777.983,
+      "average": 119.51509278350503,
+      "median": 109.576
+    },
+    {
+      "type": "read",
+      "length": "524288",
+      "operations": 537,
+      "min": 122.543,
+      "max": 3539.179,
+      "average": 201.52297020484156,
+      "median": 155.606
+    },
+    {
+      "type": "read",
+      "length": "1048576",
+      "operations": 1436,
+      "min": 201.758,
+      "max": 3538.937,
+      "average": 302.1616706128136,
+      "median": 241.299
+    },
+    {
+      "type": "read",
+      "length": "2097152",
+      "operations": 418,
+      "min": 366.47,
+      "max": 3261.713,
+      "average": 530.0227177033488,
+      "median": 429.158
+    },
+    {
+      "type": "read",
+      "length": "4194304",
+      "operations": 59,
+      "min": 735.334,
+      "max": 3686.542,
+      "average": 914.3766610169492,
+      "median": 839.527
+    },
+    {
+      "type": "randomread",
+      "length": "256",
+      "operations": 951,
+      "min": 49.409,
+      "max": 862.597,
+      "average": 67.82451419558365,
+      "median": 59.445
+    },
+    {
+      "type": "randomread",
+      "length": "512",
+      "operations": 158,
+      "min": 51.715,
+      "max": 774.977,
+      "average": 68.84859493670882,
+      "median": 59.259
+    },
+    {
+      "type": "randomread",
+      "length": "1024",
+      "operations": 115,
+      "min": 51.288,
+      "max": 123.981,
+      "average": 61.973973913043494,
+      "median": 59.343
+    },
+    {
+      "type": "randomread",
+      "length": "2048",
+      "operations": 107,
+      "min": 51.185,
+      "max": 110.059,
+      "average": 62.06074766355137,
+      "median": 59.31
+    },
+    {
+      "type": "randomread",
+      "length": "4096",
+      "operations": 255,
+      "min": 51.931,
+      "max": 925.681,
+      "average": 67.85342352941174,
+      "median": 60.783
+    },
+    {
+      "type": "randomread",
+      "length": "8192",
+      "operations": 166,
+      "min": 52.368,
+      "max": 151.173,
+      "average": 64.53050602409638,
+      "median": 61.35
+    },
+    {
+      "type": "randomread",
+      "length": "16384",
+      "operations": 253,
+      "min": 54.85,
+      "max": 400.286,
+      "average": 67.74457707509883,
+      "median": 63.143
+    },
+    {
+      "type": "randomread",
+      "length": "32768",
+      "operations": 302,
+      "min": 56.264,
+      "max": 741.789,
+      "average": 70.89464900662253,
+      "median": 65.373
+    },
+    {
+      "type": "randomread",
+      "length": "65536",
+      "operations": 413,
+      "min": 61.509,
+      "max": 797.895,
+      "average": 77.94550847457631,
+      "median": 71.119
+    },
+    {
+      "type": "randomread",
+      "length": "131072",
+      "operations": 513,
+      "min": 67.366,
+      "max": 2500.791,
+      "average": 94.05675828460025,
+      "median": 82.928
+    },
+    {
+      "type": "randomread",
+      "length": "262144",
+      "operations": 823,
+      "min": 90.506,
+      "max": 3094.689,
+      "average": 138.42793317132453,
+      "median": 107.39
+    },
+    {
+      "type": "randomread",
+      "length": "524288",
+      "operations": 532,
+      "min": 128.533,
+      "max": 2500.121,
+      "average": 166.8860263157896,
+      "median": 154.088
+    },
+    {
+      "type": "randomread",
+      "length": "1048576",
+      "operations": 1397,
+      "min": 202.106,
+      "max": 3031.171,
+      "average": 293.13234788833245,
+      "median": 251.718
+    },
+    {
+      "type": "randomread",
+      "length": "2097152",
+      "operations": 418,
+      "min": 363.129,
+      "max": 3092.266,
+      "average": 498.472232057416,
+      "median": 440.083
+    },
+    {
+      "type": "randomread",
+      "length": "4194304",
+      "operations": 53,
+      "min": 742.02,
+      "max": 3366.256,
+      "average": 1016.0973962264152,
+      "median": 873.528
+    },
+    {
+      "type": "prune",
+      "length": "256",
+      "operations": 959,
+      "min": 40.88,
+      "max": 16008.608,
+      "average": 127.69357247132433,
+      "median": 47.206
+    },
+    {
+      "type": "prune",
+      "length": "512",
+      "operations": 178,
+      "min": 41.221,
+      "max": 74.795,
+      "average": 47.99873033707867,
+      "median": 46.837
+    },
+    {
+      "type": "prune",
+      "length": "1024",
+      "operations": 120,
+      "min": 41.43,
+      "max": 12175.321,
+      "average": 150.05630000000002,
+      "median": 47.665
+    },
+    {
+      "type": "prune",
+      "length": "2048",
+      "operations": 119,
+      "min": 40.662,
+      "max": 135.154,
+      "average": 49.21532773109244,
+      "median": 46.411
+    },
+    {
+      "type": "prune",
+      "length": "4096",
+      "operations": 239,
+      "min": 41.109,
+      "max": 2694.22,
+      "average": 60.38277405857739,
+      "median": 46.77
+    },
+    {
+      "type": "prune",
+      "length": "8192",
+      "operations": 179,
+      "min": 41.587,
+      "max": 2620.458,
+      "average": 62.6516312849162,
+      "median": 46.651
+    },
+    {
+      "type": "prune",
+      "length": "16384",
+      "operations": 239,
+      "min": 40.942,
+      "max": 12312.726,
+      "average": 100.50784518828452,
+      "median": 46.966
+    },
+    {
+      "type": "prune",
+      "length": "32768",
+      "operations": 300,
+      "min": 41.198,
+      "max": 12226.252,
+      "average": 88.60213333333331,
+      "median": 46.94
+    },
+    {
+      "type": "prune",
+      "length": "65536",
+      "operations": 418,
+      "min": 40.818,
+      "max": 12033.378,
+      "average": 81.62809090909091,
+      "median": 46.834
+    },
+    {
+      "type": "prune",
+      "length": "131072",
+      "operations": 479,
+      "min": 41.023,
+      "max": 107.278,
+      "average": 49.06761586638832,
+      "median": 46.692
+    },
+    {
+      "type": "prune",
+      "length": "262144",
+      "operations": 776,
+      "min": 40.558,
+      "max": 15438.411,
+      "average": 138.34548067010311,
+      "median": 46.909
+    },
+    {
+      "type": "prune",
+      "length": "524288",
+      "operations": 537,
+      "min": 40.086,
+      "max": 12374.069,
+      "average": 73.66359776536315,
+      "median": 46.558
+    },
+    {
+      "type": "prune",
+      "length": "1048576",
+      "operations": 1436,
+      "min": 41.133,
+      "max": 12613.421,
+      "average": 86.88024303621164,
+      "median": 46.848
+    },
+    {
+      "type": "prune",
+      "length": "2097152",
+      "operations": 418,
+      "min": 40.989,
+      "max": 15602.56,
+      "average": 222.23512200956935,
+      "median": 46.994
+    },
+    {
+      "type": "prune",
+      "length": "4194304",
+      "operations": 59,
+      "min": 40.996,
+      "max": 88.137,
+      "average": 49.67410169491526,
+      "median": 47.16
+    }
+  ],
+  "time": 6067994.308,
+  "elapsed": 5900986.281000001
+}
