@@ -6,6 +6,7 @@
 const assert = require('./util/assert');
 const consensus = require('../lib/protocol/consensus');
 const Coin = require('../lib/primitives/coin');
+const Block = require('../lib/primitives/block');
 const Script = require('../lib/script/script');
 const Opcode = require('../lib/script/opcode');
 const FullNode = require('../lib/node/fullnode');
@@ -40,9 +41,12 @@ let tx2 = null;
 
 async function mineBlock(tip, tx) {
   const job = await miner.createJob(tip);
+  let block = null;
 
-  if (!tx)
-    return await job.mineAsync();
+  if (!tx) {
+    block = await job.mineAsync();
+    return Block.fromRaw(block.toRaw());
+  }
 
   const spend = new MTX();
 
@@ -58,7 +62,9 @@ async function mineBlock(tip, tx) {
   job.addTX(spend.toTX(), spend.view);
   job.refresh();
 
-  return await job.mineAsync();
+  block = await job.mineAsync();
+
+  return Block.fromRaw(block.toRaw());
 }
 
 async function mineCSV(fund) {
@@ -83,7 +89,9 @@ async function mineCSV(fund) {
   job.addTX(tx, view);
   job.refresh();
 
-  return await job.mineAsync();
+  const block = await job.mineAsync();
+
+  return Block.fromRaw(block.toRaw());
 }
 
 describe('Node', function() {
@@ -107,7 +115,7 @@ describe('Node', function() {
   it('should mine a block', async () => {
     const block = await miner.mineBlock();
     assert(block);
-    await chain.add(block);
+    await chain.add(Block.fromRaw(block.toRaw()));
   });
 
   it('should mine competing chains', async function () {
@@ -167,7 +175,7 @@ describe('Node', function() {
       forked = true;
     });
 
-    await chain.add(block);
+    await chain.add(Block.fromRaw(block.toRaw()));
 
     assert(forked);
     assert.bufferEqual(chain.tip.hash, block.hash());
@@ -326,7 +334,7 @@ describe('Node', function() {
 
     for (let i = 0; i < 417; i++) {
       const block = await miner.mineBlock();
-      await chain.add(block);
+      await chain.add(Block.fromRaw(block.toRaw()));
       switch (chain.height) {
         case 144: {
           const prev = await chain.getPrevious(chain.tip);
@@ -386,7 +394,7 @@ describe('Node', function() {
 
     const block = await job.mineAsync();
 
-    await chain.add(block);
+    await chain.add(Block.fromRaw(block.toRaw()));
   });
 
   it('should fail csv with bad sequence', async () => {
@@ -425,7 +433,7 @@ describe('Node', function() {
   it('should mine a block', async () => {
     const block = await miner.mineBlock();
     assert(block);
-    await chain.add(block);
+    await chain.add(Block.fromRaw(block.toRaw()));
   });
 
   it('should fail csv lock checks', async () => {
@@ -458,7 +466,7 @@ describe('Node', function() {
 
     let err;
     try {
-      await chain.add(block);
+      await chain.add(Block.fromRaw(block.toRaw()));
     } catch (e) {
       err = e;
     }
@@ -783,7 +791,7 @@ describe('Node', function() {
     job.refresh();
 
     const block = await job.mineAsync();
-    await chain.add(block);
+    await chain.add(Block.fromRaw(block.toRaw()));
 
     await new Promise(r => setTimeout(r, 300));
 

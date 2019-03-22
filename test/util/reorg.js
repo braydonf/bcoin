@@ -2,6 +2,7 @@
 
 const assert = require('./assert');
 const Chain = require('../../lib/blockchain/chain');
+const Block = require('../../lib/primitives/block');
 const CPUMiner = require('../../lib/mining/cpuminer');
 
 /**
@@ -28,8 +29,8 @@ async function reorg(chain, cpu, height) {
       const hash1 = blk1.hash();
       const hash2 = blk2.hash();
 
-      assert(await chain.add(blk1));
-      assert(await chain.add(blk2));
+      assert(await chain.add(Block.fromRaw(blk1.toRaw())));
+      assert(await chain.add(Block.fromRaw(blk2.toRaw())));
 
       assert.bufferEqual(chain.tip.hash, hash1);
 
@@ -54,7 +55,7 @@ async function reorg(chain, cpu, height) {
       forked = true;
     });
 
-    assert(await chain.add(block));
+    assert(await chain.add(Block.fromRaw(block.toRaw())));
 
     assert(forked);
     assert.bufferEqual(chain.tip.hash, block.hash());

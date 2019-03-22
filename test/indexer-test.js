@@ -6,11 +6,13 @@
 const assert = require('./util/assert');
 const reorg = require('./util/reorg');
 const Chain = require('../lib/blockchain/chain');
+const Block = require('../lib/primitives/block');
 const WorkerPool = require('../lib/workers/workerpool');
 const Miner = require('../lib/mining/miner');
 const MemWallet = require('./util/memwallet');
 const TXIndexer = require('../lib/indexer/txindexer');
 const AddrIndexer = require('../lib/indexer/addrindexer');
+const BlockStore = require('../lib/blockstore/level');
 const Network = require('../lib/protocol/network');
 const network = Network.get('regtest');
 
@@ -18,10 +20,16 @@ const workers = new WorkerPool({
   enabled: true
 });
 
+const blocks = new BlockStore({
+  memory: true,
+  network
+});
+
 const chain = new Chain({
   memory: true,
   network,
-  workers
+  workers,
+  blocks
 });
 
 const miner = new Miner({
@@ -52,6 +60,7 @@ describe('Indexer', function() {
   this.timeout(45000);
 
   it('should open indexer', async () => {
+    await blocks.open();
     await chain.open();
     await miner.open();
     await txindexer.open();
@@ -64,7 +73,7 @@ describe('Indexer', function() {
     for (let i = 0; i < 10; i++) {
       const block = await cpu.mineBlock();
       assert(block);
-      assert(await chain.add(block));
+      assert(await chain.add(Block.fromRaw(block.toRaw())));
     }
 
     assert.strictEqual(chain.height, 10);
@@ -88,7 +97,7 @@ describe('Indexer', function() {
     for (let i = 0; i < 10; i++) {
       const block = await cpu.mineBlock();
       assert(block);
-      assert(await chain.add(block));
+      assert(await chain.add(Block.fromRaw(block.toRaw())));
     }
 
     assert.strictEqual(chain.height, 20);
