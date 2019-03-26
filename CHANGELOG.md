@@ -129,6 +129,12 @@ The following methods have been deprecated:
 - The option for `coin-cache` has been removed, this setting was causing
   issues during the sync with out-of-memory errors and was making performance
   worse instead of better.
+- To resolve CPU and memory exhaustion issues for wallets with many
+  transactions, an new option was introduced to for the maximum number
+  of transactions returned in a page of results for wallets. The maximum
+  number can be changed based on individual resource limits with the
+  configuration option `wallet-max-txs`, it's unlikely that this value
+  should need to be changed.
 
 ### Script changes
 
