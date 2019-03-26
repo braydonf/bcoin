@@ -115,6 +115,12 @@ The following methods have been deprecated:
 
 - Pool options now has a `--discover` option exposed, and the `--only` node
   option will disable discovery of new nodes.
+- To resolve CPU and memory exhaustion issues for wallets with many
+  transactions, an new option was introduced to for the maximum number
+  of transactions returned in a page of results for wallets. The maximum
+  number can be changed based on individual resource limits with the
+  configuration option `wallet-max-txs`, it's unlikely that this value
+  should need to be changed.
 
 ### Script changes
 
