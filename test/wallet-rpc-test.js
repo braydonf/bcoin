@@ -5,7 +5,7 @@
 
 const {NodeClient, WalletClient} = require('bclient');
 const assert = require('./util/assert');
-const {rimraf, sleep} = require('./util/common');
+const {rimraf, testdir, sleep} = require('./util/common');
 const FullNode = require('../lib/node/fullnode');
 const Network = require('../lib/protocol/network');
 const Mnemonic = require('../lib/hd/mnemonic');
@@ -289,8 +289,8 @@ describe('Wallet RPC', function() {
   describe('transactions', function() {
     this.timeout(60000);
 
-    const testPrefix = '/tmp/bcoin-fullnode';
-    const spvTestPrefix = '/tmp/bcoin-spvnode';
+    const testPrefix = testdir('fullnode');
+    const spvTestPrefix = testdir('spvnode');
     const genesisTime = 1534965859;
 
     const ports = {
