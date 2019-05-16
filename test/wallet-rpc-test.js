@@ -5,7 +5,7 @@
 
 const {NodeClient, WalletClient} = require('bclient');
 const assert = require('./util/assert');
-const {rimraf, testdir, sleep} = require('./util/common');
+const {rimraf, testdir, forValue} = require('./util/common');
 const FullNode = require('../lib/node/fullnode');
 const Network = require('../lib/protocol/network');
 const Mnemonic = require('../lib/hd/mnemonic');
@@ -347,8 +347,8 @@ describe('Wallet RPC', function() {
         count: 1
       });
 
-      // TODO remove this
-      await sleep(1000);
+      await forValue(node.plugins.walletdb.wdb, 'height', 125);
+      await forValue(spvnode.plugins.walletdb.wdb, 'height', 125);
     });
 
     after(async () => {
