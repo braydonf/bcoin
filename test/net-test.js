@@ -3014,6 +3014,47 @@ describe('Net', function() {
 
         assert(!called);
       });
+
+      it('will connect previously saved blocks', async () => {
+        const pool = new Pool({
+          logger: Logger.global,
+          chain: {network, options: {}, on: () => {}}
+        });
+
+        stubChain(pool);
+        stubChainDB(pool);
+        pool.chain.getPrevious = async (entry) => {
+          const height = parseMockHash(entry.hash);
+          return mockEntry(height - 1);
+        };
+
+        pool.chain.db.hasBlock = (hash) => {
+          const height = parseMockHash(hash);
+          if (height % 2 === 0)
+            return true;
+
+          return false;
+        };
+
+        const peer = Peer.fromOptions(pool.options);
+        const best = mockEntry(1024);
+
+        let blockCalled = false;
+        pool.getBlock = () => {
+          blockCalled = true;
+        };
+
+        let callCount = 0;
+        pool.attachBlock = (entry) => {
+          assert.equal(entry.height % 2, 0);
+          callCount += 1;
+        };
+
+        await pool.getNextBlocks(peer, best);
+
+        assert(blockCalled);
+        assert.equal(callCount, 1);
+      });
     });
 
     describe('handleBad', function() {
