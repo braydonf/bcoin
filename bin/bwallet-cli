@@ -3,7 +3,7 @@
 'use strict';
 
 const Config = require('bcfg');
-const WalletClient = require('../lib/client/wallet');
+const WalletClient = require('bcoin/lib/client/wallet');
 
 const ports = {
   main: 8334,

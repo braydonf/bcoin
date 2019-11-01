@@ -36,7 +36,7 @@ if (secp256k1.native !== 2) {
   return;
 }
 
-const FullNode = require('../lib/node/fullnode');
+const FullNode = require('bcoin/lib/node/fullnode');
 
 const node = new FullNode({
   file: true,
@@ -53,7 +53,7 @@ const node = new FullNode({
 
 // Temporary hack
 if (!node.config.bool('no-wallet') && !node.has('walletdb')) {
-  const plugin = require('../lib/wallet/plugin');
+  const plugin = require('bcoin/lib/wallet/plugin');
   node.use(plugin);
 }
 

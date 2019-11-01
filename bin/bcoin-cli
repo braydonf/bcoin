@@ -3,7 +3,7 @@
 'use strict';
 
 const Config = require('bcfg');
-const NodeClient = require('../lib/client/node');
+const NodeClient = require('bcoin/lib/client/node');
 
 const ports = {
   main: 8332,

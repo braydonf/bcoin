@@ -1,49 +1,35 @@
 # Bcoin
 
-[![Build Status][circleci-status-img]][circleci-status-url]
-[![Coverage Status][coverage-status-img]][coverage-status-url]
-
-__NOTE__: The latest release of bcoin contains a non-backward compatible change
-to the rest API. Please read the [changelog]'s "migrating" section for more
-details.
-
----
-
 **Bcoin** is an alternative implementation of the bitcoin protocol, written in
-node.js.
+JavaScript/C/C++/Node.js.
 
 Bcoin is well tested and aware of all known consensus rules. It is currently
 used in production as the consensus backend and wallet system for
 [purse.io][purse].
-
-## Uses
-
-- Full Node
-- SPV Node
-- Wallet Backend (bip44 derivation)
-- Mining Backend (getblocktemplate support)
-- Layer 2 Backend (lightning)
-- General Purpose Bitcoin Library
-
-Try it in the browser: [https://bcoin.io/browser/](https://bcoin.io/browser/)
 
 ## Install
 
 ```
 $ git clone git://github.com/bcoin-org/bcoin.git
 $ cd bcoin
-$ npm install
+$ yarn install
 $ ./bin/bcoin
 ```
 
 See the [Getting started][guide] guide for more in-depth installation
-instructions, including verifying releases.
+instructions, including verifying releases and necessary dependencies.
 
 ## Documentation
 
 - General docs: [docs/](docs/README.md)
 - Wallet and node API docs: https://bcoin.io/api-docs/
 - Library API docs: https://bcoin.io/docs/
+
+## Packages
+
+This repository has several packages that can be used independently. All
+dependencies are included in the source tree. There is therefore no dependency
+on external services for fetching and securing dependencies.
 
 ## Support
 
@@ -72,9 +58,3 @@ See LICENSE for more info.
 [guide]: docs/getting-started.md
 [freenode]: https://freenode.net/
 [irc]: irc://irc.freenode.net/bcoin
-[changelog]: CHANGELOG.md
-
-[coverage-status-img]: https://codecov.io/gh/bcoin-org/bcoin/badge.svg?branch=master
-[coverage-status-url]: https://codecov.io/gh/bcoin-org/bcoin?branch=master
-[circleci-status-img]: https://circleci.com/gh/bcoin-org/bcoin/tree/master.svg?style=shield
-[circleci-status-url]: https://circleci.com/gh/bcoin-org/bcoin/tree/master

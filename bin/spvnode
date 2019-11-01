@@ -5,8 +5,8 @@
 process.title = 'bcoin';
 
 const assert = require('assert');
-const SPVNode = require('../lib/node/spvnode');
-const Outpoint = require('../lib/primitives/outpoint');
+const SPVNode = require('bcoin/lib/node/spvnode');
+const Outpoint = require('bcoin/lib/primitives/outpoint');
 
 const sha256 = require('bcrypto/lib/sha256');
 const secp256k1 = require('bcrypto/lib/secp256k1');
