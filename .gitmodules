@@ -1,0 +1,96 @@
+[submodule "packages/bcfg"]
+	path = packages/bcfg
+	url = https://github.com/bcoin-org/bcfg
+[submodule "packages/bcrypto"]
+	path = packages/bcrypto
+	url = https://github.com/bcoin-org/bcrypto
+[submodule "packages/bcurl"]
+	path = packages/bcurl
+	url = https://github.com/bcoin-org/bcurl
+[submodule "packages/bdb"]
+	path = packages/bdb
+	url = https://github.com/bcoin-org/bdb
+[submodule "packages/bdns"]
+	path = packages/bdns
+	url = https://github.com/bcoin-org/bdns
+[submodule "packages/bevent"]
+	path = packages/bevent
+	url = https://github.com/bcoin-org/bevent
+[submodule "packages/bfile"]
+	path = packages/bfile
+	url = https://github.com/bcoin-org/bfile
+[submodule "packages/bfilter"]
+	path = packages/bfilter
+	url = https://github.com/bcoin-org/bfilter
+[submodule "packages/bheep"]
+	path = packages/bheep
+	url = https://github.com/bcoin-org/bheep
+[submodule "packages/binet"]
+	path = packages/binet
+	url = https://github.com/bcoin-org/binet
+[submodule "packages/blgr"]
+	path = packages/blgr
+	url = https://github.com/bcoin-org/blgr
+[submodule "packages/blru"]
+	path = packages/blru
+	url = https://github.com/bcoin-org/blru
+[submodule "packages/blst"]
+	path = packages/blst
+	url = https://github.com/bcoin-org/blst
+[submodule "packages/bmutex"]
+	path = packages/bmutex
+	url = https://github.com/bcoin-org/bmutex
+[submodule "packages/bsert"]
+	path = packages/bsert
+	url = https://github.com/chjj/bsert
+[submodule "packages/bsip"]
+	path = packages/bsip
+	url = https://github.com/bcoin-org/bsip
+[submodule "packages/bsock"]
+	path = packages/bsock
+	url = https://github.com/bcoin-org/bsock
+[submodule "packages/bsocks"]
+	path = packages/bsocks
+	url = https://github.com/bcoin-org/bsocks
+[submodule "packages/bstring"]
+	path = packages/bstring
+	url = https://github.com/bcoin-org/bstring
+[submodule "packages/btcp"]
+	path = packages/btcp
+	url = https://github.com/bcoin-org/btcp
+[submodule "packages/buffer-map"]
+	path = packages/buffer-map
+	url = https://github.com/chjj/buffer-map
+[submodule "packages/bufio"]
+	path = packages/bufio
+	url = https://github.com/bcoin-org/bufio
+[submodule "packages/bupnp"]
+	path = packages/bupnp
+	url = https://github.com/bcoin-org/bupnp
+[submodule "packages/bval"]
+	path = packages/bval
+	url = https://github.com/bcoin-org/bval
+[submodule "packages/bweb"]
+	path = packages/bweb
+	url = https://github.com/bcoin-org/bweb
+[submodule "packages/mrmr"]
+	path = packages/mrmr
+	url = https://github.com/bcoin-org/mrmr
+[submodule "packages/n64"]
+	path = packages/n64
+	url = https://github.com/chjj/n64
+[submodule "packages/bmocha"]
+	path = packages/bmocha
+	url = https://github.com/bcoin-org/bmocha
+[submodule "packages/brq"]
+	path = packages/brq
+	url = https://github.com/bcoin-org/brq
+[submodule "packages/bs32"]
+	path = packages/bs32
+	url = https://github.com/bcoin-org/bs32
+[submodule "packages/loady"]
+	path = packages/loady
+	url = https://github.com/chjj/loady
+[submodule "packages/nan"]
+	path = packages/nan
+	url = https://github.com/nodejs/nan
