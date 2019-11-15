@@ -1,4 +1,4 @@
-node_modules/
+node_modules/**/build
 .nyc_output
 docs/reference/
 docker_data/
