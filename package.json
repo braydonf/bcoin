@@ -38,7 +38,7 @@
     "blst": "git+https://github.com/bcoin-org/blst.git#semver:~0.1.5",
     "bmutex": "git+https://github.com/bcoin-org/bmutex.git#semver:~0.1.6",
     "brq": "git+https://github.com/bcoin-org/brq.git#semver:~0.1.7",
-    "bs32": "git+https://github.com/bcoin-org/bs32.git#semver:=0.1.6",
+    "bs32": "git+https://github.com/bcoin-org/bs32.git#semver:~0.1.6",
     "bsert": "git+https://github.com/chjj/bsert.git#semver:~0.0.10",
     "bsip": "git+https://github.com/bcoin-org/bsip.git#semver:~0.1.9",
     "bsock": "git+https://github.com/bcoin-org/bsock.git#semver:~0.1.9",
