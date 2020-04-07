@@ -1,0 +1,129 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const Config = require('bcfg');
+const WalletClient = require('../lib/client/wallet');
+
+const ports = {
+  main: 8334,
+  testnet: 18334,
+  regtest: 48334,
+  simnet: 18558
+};
+
+class CLI {
+  constructor() {
+    this.config = new Config('bcoin', {
+      suffix: 'network',
+      fallback: 'main',
+      alias: {
+        'n': 'network',
+        'u': 'url',
+        'uri': 'url',
+        'k': 'api-key',
+        's': 'ssl',
+        'h': 'httphost',
+        'p': 'httpport'
+      }
+    });
+
+    this.config.load({
+      argv: true,
+      env: true
+    });
+
+    this.config.open('wallet.conf');
+
+    this.argv = this.config.argv;
+    this.network = this.config.str('network', 'main');
+
+    const id = this.config.str('id', 'primary');
+    const token = this.config.str('token', '');
+
+    this.client = new WalletClient({
+      url: this.config.str('url'),
+      apiKey: this.config.str('api-key'),
+      ssl: this.config.bool('ssl'),
+      host: this.config.str('http-host'),
+      port: this.config.uint('http-port')
+        || ports[this.network]
+        || ports.main,
+      token
+    });
+
+    this.wallet = this.client.wallet(id, token);
+  }
+
+  log(json) {
+    if (typeof json === 'string')
+      return console.log.apply(console, arguments);
+    return console.log(JSON.stringify(json, null, 2));
+  }
+
+  async getAddresses() {
+    let index = this.config.uint(0, 0);
+
+    process.stdout.write('[');
+
+    while (true) {
+      const params = [index];
+
+      let result;
+      try {
+        result = await this.client.execute('getaddressesbyaccount', params);
+      } catch (e) {
+        console.log(e);
+        if (e.type === 'RPCError') {
+          this.log(e.message);
+          return;
+        }
+        throw e;
+      }
+
+      if (result.length > 0) {
+        let str = '';
+
+        if (index > 0)
+          str += ',\n';
+
+        str += JSON.stringify(result);
+
+        process.stdout.write(str);
+      } else {
+        break;
+      }
+
+      index++;
+    }
+
+    this.log(']');
+  }
+
+  async open() {
+    switch (this.argv.shift()) {
+      case 'addresses':
+        await this.getAddresses();
+        break;
+      default:
+        this.log('Unrecognized command.');
+        this.log('Commands:');
+        this.log('  $ addresses: List all addresses per account.');
+        break;
+    }
+  }
+
+  async destroy() {
+    if (this.client.opened)
+      await this.client.close();
+  }
+}
+
+(async () => {
+  const cli = new CLI();
+  await cli.open();
+  await cli.destroy();
+})().catch((err) => {
+  console.error(err.stack);
+  process.exit(1);
+});

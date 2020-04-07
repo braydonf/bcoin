@@ -1,0 +1,132 @@
+#!/usr/bin/env node
+
+'use strict';
+
+const Config = require('bcfg');
+const NodeClient = require('../lib/client/node');
+const Amount = require('../lib/btc/amount');
+const fs = require('bfile');
+
+const ports = {
+  main: 8332,
+  testnet: 18332,
+  regtest: 48332,
+  simnet: 18556
+};
+
+class CLI {
+  constructor() {
+    this.config = new Config('bcoin', {
+      suffix: 'network',
+      fallback: 'main',
+      alias: {
+        'n': 'network',
+        'u': 'url',
+        'uri': 'url',
+        'k': 'api-key',
+        's': 'ssl',
+        'h': 'httphost',
+        'p': 'httpport'
+      }
+    });
+
+    this.config.load({
+      argv: true,
+      env: true
+    });
+
+    this.config.open('bcoin.conf');
+
+    this.argv = this.config.argv;
+    this.network = this.config.str('network', 'main');
+
+    this.client = new NodeClient({
+      url: this.config.str('url'),
+      apiKey: this.config.str('api-key'),
+      ssl: this.config.bool('ssl'),
+      host: this.config.str('http-host'),
+      port: this.config.uint('http-port')
+        || ports[this.network]
+        || ports.main
+    });
+  }
+
+  log(json) {
+    if (typeof json === 'string')
+      return console.log.apply(console, arguments);
+    return console.log(JSON.stringify(json, null, 2));
+  }
+
+  async open() {
+    switch (this.argv.shift()) {
+      case 'txs':
+        await this.getTxs();
+        break;
+      default:
+        this.log('Unrecognized command.');
+        this.log('Commands:');
+        this.log('  $ txs: Get transactions from addresses.');
+        break;
+    }
+  }
+
+  async getTxs() {
+    const input = this.config.str(0, '');
+
+    if (!input)
+      throw new Error('Unknown input filename.');
+
+    const addrs = await fs.readJSON(input);
+
+    process.stdout.write('[');
+
+    for (let i = 0; i < addrs.length; i++) {
+      const acct = addrs[i];
+
+      process.stdout.write(i > 0 ? ',\n[' : '[');
+
+      for (let j = 0; j < acct.length; j++) {
+        const addr = acct[j];
+        let txs = await this.client.get(`/tx/address/${addr}`);
+
+        while (txs.length > 0) {
+          const hash = txs[txs.length - 1].hash;
+          const next = await this.client.get(
+            `/tx/address/${addr}?after=${hash}`);
+
+          if (next.length > 0)
+            txs = txs.concat(next);
+          else
+            break;
+        }
+
+        let str = '';
+
+        if (j > 0)
+          str += ',';
+
+        str += JSON.stringify(txs);
+
+        process.stdout.write(str);
+      }
+
+      process.stdout.write(']');
+    }
+
+    process.stdout.write(']');
+  }
+
+  async destroy() {
+    if (this.client && this.client.opened)
+      await this.client.close();
+  }
+}
+
+(async () => {
+  const cli = new CLI();
+  await cli.open();
+  await cli.destroy();
+})().catch((err) => {
+  console.error(err.stack);
+  process.exit(1);
+});
