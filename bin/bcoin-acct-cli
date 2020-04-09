@@ -2,10 +2,11 @@
 
 'use strict';
 
+const readline = require('readline');
+const assert = require('bsert');
+const fs = require('bfile');
 const Config = require('bcfg');
 const NodeClient = require('../lib/client/node');
-const Amount = require('../lib/btc/amount');
-const fs = require('bfile');
 
 const ports = {
   main: 8332,
@@ -62,10 +63,14 @@ class CLI {
       case 'txs':
         await this.getTxs();
         break;
+      case 'deltas':
+        await this.createDeltas();
+        break;
       default:
         this.log('Unrecognized command.');
         this.log('Commands:');
         this.log('  $ txs: Get transactions from addresses.');
+        this.log('  $ deltas: Get balance deltas from transactions.');
         break;
     }
   }
@@ -78,12 +83,8 @@ class CLI {
 
     const addrs = await fs.readJSON(input);
 
-    process.stdout.write('[');
-
     for (let i = 0; i < addrs.length; i++) {
       const acct = addrs[i];
-
-      process.stdout.write(i > 0 ? ',\n[' : '[');
 
       for (let j = 0; j < acct.length; j++) {
         const addr = acct[j];
@@ -100,20 +101,163 @@ class CLI {
             break;
         }
 
-        let str = '';
+        const str = JSON.stringify({index: i, addr: addr, txs: txs});
 
-        if (j > 0)
-          str += ',';
-
-        str += JSON.stringify(txs);
-
-        process.stdout.write(str);
+        process.stdout.write(str + '\n');
       }
+    }
+  }
 
-      process.stdout.write(']');
+  async createDeltas() {
+    const addrinput = this.config.str(0, '');
+    const txinput = this.config.str(1, '');
+
+    if (!addrinput)
+      throw new Error('Unknown addrinput filename.');
+
+    if (!txinput)
+      throw new Error('Unknown txinput filename.');
+
+    const addrsData = await fs.readJSON(addrinput);
+    const addrs = new Set();
+    for (const acct of addrsData) {
+      for (const addr of acct)
+        addrs.add(addr);
     }
 
-    process.stdout.write(']');
+    class Row {
+      constructor(options = {}) {
+        this.hash = options.hash || null;
+        this.fee = options.fee || 0;
+        this.mtime = options.mtime || 0;
+        this.height = options.height || 0;
+        this.block = options.block || null;
+        this.time = options.time || 0;
+        this.delta = options.delta || 0;
+        this.spending = options.spending || [];
+        this.receiving = options.receiving || [];
+      }
+
+      static headers() {
+        return Object.keys(new this()).join(',');
+      }
+
+      values() {
+        const clone = Object.assign({}, this);
+        clone.spending = this.spending.join(' ');
+        clone.receiving = this.receiving.join(' ');
+
+        return Object.values(clone).join(',');
+      }
+    }
+
+    function processTx(tx) {
+      let delta = 0;
+      const inputInfo = [];
+      const outputInfo = [];
+
+      if (tx.inputs) {
+        for (const input of tx.inputs) {
+          const info = {
+            addr: input.coin.address,
+            value: input.coin.value,
+            wallet: false
+          };
+
+          assert(Number.isInteger(info.value));
+
+          if (addrs.has(info.addr)) {
+            delta -= info.value;
+            info.wallet = true;
+          }
+
+          inputInfo.push(info);
+        }
+      }
+
+      for (const output of tx.outputs) {
+        const info = {
+          addr: output.address,
+          value: output.value,
+          wallet: false
+        }
+
+        assert(Number.isInteger(info.value));
+
+        if (addrs.has(info.addr)) {
+          delta += info.value;
+          info.wallet = true;
+        }
+
+        outputInfo.push(info);
+      }
+
+      const row = new Row({
+        hash: tx.hash,
+        fee: tx.fee,
+        mtime: tx.mtime,
+        height: tx.height,
+        block: tx.block,
+        time: tx.time,
+        delta: delta
+      });
+
+      if (delta > 0) {
+        for (const info of inputInfo) {
+          if (!info.wallet && info.value > 0)
+            row.spending.push(info.addr);
+        }
+
+        for (const info of outputInfo) {
+          if (info.wallet && info.value > 0)
+            row.receiving.push(info.addr);
+        }
+      } else if (delta < 0) {
+        for (const info of inputInfo) {
+          if (info.wallet && info.value > 0)
+            row.spending.push(info.addr);
+        }
+
+        for (const info of outputInfo) {
+          if (!info.wallet && info.value > 0)
+            row.receiving.push(info.addr);
+        }
+      }
+
+      return row;
+    }
+
+    return new Promise((resolve, reject) => {
+      const rl = readline.createInterface({
+        input: fs.createReadStream(txinput)
+      });
+
+      const txsSeen = new Set();
+
+      process.stdout.write(Row.headers() + '\n');
+
+      rl.on('line', (line) => {
+        try {
+          const data = JSON.parse(line);
+          const txs = data.txs;
+
+          for (const tx of txs) {
+            if (txsSeen.has(tx.hash))
+              continue;
+
+            const row = processTx(tx);
+
+            process.stdout.write(row.values() + '\n');
+
+            txsSeen.add(tx.hash);
+          }
+        } catch (err) {
+          reject(err);
+        }
+      });
+
+      rl.once('close', () => resolve());
+    });
   }
 
   async destroy() {
