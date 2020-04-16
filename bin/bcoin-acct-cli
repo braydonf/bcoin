@@ -3,9 +3,11 @@
 'use strict';
 
 const readline = require('readline');
+const path = require('path');
 const assert = require('bsert');
 const fs = require('bfile');
 const Config = require('bcfg');
+const {Lock} = require('bmutex');
 const NodeClient = require('../lib/client/node');
 
 const ports = {
@@ -67,11 +69,15 @@ class CLI {
       case 'deltas':
         await this.createDeltas();
         break;
+      case 'multideltas':
+        await this.createMultiDeltas();
+        break;
       default:
         this.log('Unrecognized command.');
         this.log('Commands:');
         this.log('  $ txs: Get transactions from addresses.');
         this.log('  $ deltas: Get balance deltas from transactions.');
+        this.log('  $ multideltas: Deltas from multiple wallet transactions.');
         break;
     }
   }
@@ -109,6 +115,210 @@ class CLI {
     }
   }
 
+  async createMultiDeltas() {
+    const input = this.config.str(0, '');
+    const basedir = path.dirname(input);
+    const manifest = await fs.readJSON(input);
+
+    const addrs = {};
+
+    for (const [name, value] of Object.entries(manifest)) {
+      const data = await fs.readJSON(path.resolve(basedir, value.addresses));
+
+      addrs[name] = new Set();
+
+      for (const acct of data) {
+        for (const addr of acct)
+          addrs[name].add(addr);
+      }
+    }
+
+    const locker = new Lock();
+    const seen = new Set();
+    const mtps = new Map();
+    const jobs = [];
+
+    class Row {
+      constructor(options = {}, deltas) {
+        this.hash = options.hash || null;
+        this.height = options.height || 0;
+        this.block = options.block || null;
+        this.time = options.time || 0;
+        this.blocktime = options.blocktime || 0;
+        this.fee = options.fee || 0;
+        this.delta = options.delta || 0;
+        this.initDeltas(deltas);
+        this.spending = options.spending || [];
+        this.receiving = options.receiving || [];
+      }
+
+      initDeltas(deltas) {
+        for (const [name, delta] of Object.entries(deltas))
+          this[`${name}Delta`] = delta;
+      }
+
+      static headers(deltas) {
+        return Object.keys(new this({}, deltas)).join(',');
+      }
+
+      values() {
+        const clone = Object.assign({}, this);
+        clone.spending = this.spending.join(' ');
+        clone.receiving = this.receiving.join(' ');
+
+        return Object.values(clone).join(',');
+      }
+    }
+
+    const getMedianTimePast = async (block) => {
+      if (mtps.has(block))
+        return mtps.get(block);
+
+      const header = await this.client.execute('getblockheader', [block]);
+
+      assert(header);
+
+      mtps.set(block, header.mediantime);
+
+      return header.mediantime;
+    }
+
+    function zeroDeltas() {
+      const deltas = {};
+      for (const name of Object.keys(addrs))
+        deltas[name] = 0;
+
+      return deltas;
+    }
+
+    async function processTx(tx) {
+      let delta = 0;
+      let deltas = zeroDeltas();
+      const inputInfo = [];
+      const outputInfo = [];
+
+      if (tx.inputs) {
+        for (const input of tx.inputs) {
+          const info = {
+            addr: input.coin.address,
+            value: input.coin.value,
+            wallets: false
+          };
+
+          assert(Number.isInteger(info.value));
+
+          for (const [name, set] of Object.entries(addrs)) {
+            if (set.has(info.addr)) {
+              deltas[name] -= info.value;
+              info.wallets = true;
+            }
+          }
+
+          if (info.wallets)
+            delta -= info.value;
+
+          inputInfo.push(info);
+        }
+      }
+
+      for (const output of tx.outputs) {
+        const info = {
+          addr: output.address,
+          value: output.value,
+          wallets: false
+        }
+
+        assert(Number.isInteger(info.value));
+
+        for (const [name, set] of Object.entries(addrs)) {
+          if (set.has(info.addr)) {
+            deltas[name] += info.value;
+            info.wallets = true;
+          }
+        }
+
+        if (info.wallets)
+          delta += info.value;
+
+        outputInfo.push(info);
+      }
+
+      const row = new Row({
+        hash: tx.hash,
+        height: tx.height,
+        block: tx.block,
+        time: await getMedianTimePast(tx.block),
+        blocktime: tx.time,
+        fee: tx.fee,
+        delta: delta
+      }, deltas);
+
+      if (delta > 0) {
+        for (const info of inputInfo) {
+          if (!info.wallets && info.value > 0)
+            row.spending.push(info.addr);
+        }
+
+        for (const info of outputInfo) {
+          if (info.wallets && info.value > 0)
+            row.receiving.push(info.addr);
+        }
+      } else if (delta < 0) {
+        for (const info of inputInfo) {
+          if (info.wallets && info.value > 0)
+            row.spending.push(info.addr);
+        }
+
+        for (const info of outputInfo) {
+          if (!info.wallets && info.value > 0)
+            row.receiving.push(info.addr);
+        }
+      }
+
+      return row;
+    }
+
+    process.stdout.write(Row.headers(zeroDeltas()) + '\n');
+
+    for (const value of Object.values(manifest)) {
+      await new Promise((resolve, reject) => {
+        const rl = readline.createInterface({
+          input: fs.createReadStream(path.resolve(basedir, value.txs), {
+            highWaterMark: 4 * 1024
+          })
+        });
+
+        rl.on('line', async (line) => {
+          const unlock = await locker.lock();
+          rl.pause();
+
+          try {
+            const data = JSON.parse(line);
+            const txs = data.txs;
+
+            for (const tx of txs) {
+              if (seen.has(tx.hash))
+                continue;
+
+              const row = await processTx(tx);
+
+              process.stdout.write(row.values() + '\n');
+
+              seen.add(tx.hash);
+            }
+          } catch (err) {
+            reject(err);
+          } finally {
+            rl.resume();
+            unlock();
+          }
+        });
+
+        rl.once('close', () => resolve());
+      });
+    };
+  }
+
   async createDeltas() {
     const addrinput = this.config.str(0, '');
     const txinput = this.config.str(1, '');
@@ -129,11 +339,10 @@ class CLI {
     class Row {
       constructor(options = {}) {
         this.hash = options.hash || null;
-        this.fee = options.fee || 0;
-        this.mtime = options.mtime || 0;
         this.height = options.height || 0;
         this.block = options.block || null;
         this.time = options.time || 0;
+        this.fee = options.fee || 0;
         this.delta = options.delta || 0;
         this.spending = options.spending || [];
         this.receiving = options.receiving || [];
@@ -195,11 +404,10 @@ class CLI {
 
       const row = new Row({
         hash: tx.hash,
-        fee: tx.fee,
-        mtime: tx.mtime,
         height: tx.height,
         block: tx.block,
         time: tx.time,
+        fee: tx.fee,
         delta: delta
       });
 
