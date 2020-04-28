@@ -62,6 +62,58 @@ class CLI {
     return console.log(JSON.stringify(json, null, 2));
   }
 
+  async getInfo() {
+    const wallets = await this.client.get('/wallet');
+
+    process.stdout.write('{\n');
+
+    let count = 0;
+
+    for (const id of wallets) {
+      let index = 0;
+
+      if (count > 0)
+        process.stdout.write(',\n');
+
+      process.stdout.write(`"${id}": [`);
+
+      while (true) {
+        let result;
+        try {
+          result = await this.client.get(`/wallet/${id}/account/${index}`);
+        } catch (e) {
+          console.log(e);
+          if (e.type === 'RPCError') {
+            this.log(e.message);
+            return;
+          }
+          throw e;
+        }
+
+        if (result) {
+          let str = '';
+
+          if (index > 0)
+            str += ',\n';
+
+          str += JSON.stringify(result);
+
+          process.stdout.write(str);
+        } else {
+          break;
+        }
+
+        index++;
+      }
+
+      count++;
+
+      this.log(']');
+    }
+
+    process.stdout.write('}\n');
+  }
+
   async getAddresses() {
     let index = this.config.uint(0, 0);
 
@@ -106,10 +158,14 @@ class CLI {
       case 'addresses':
         await this.getAddresses();
         break;
+      case 'info':
+        await this.getInfo();
+        break;
       default:
         this.log('Unrecognized command.');
         this.log('Commands:');
         this.log('  $ addresses: List all addresses per account.');
+        this.log('  $ info: List info per wallet and account.');
         break;
     }
   }
